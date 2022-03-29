@@ -1,0 +1,6 @@
+# Dockerfile
+FROM python:3.8                       
+RUN pip install --upgrade pip && \
+    pip install -U setuptools       # Upgrade pip and setuptools
+
+RUN pip install pytest flake8 black pylint fastapi uvicorn # Installing project dependencies

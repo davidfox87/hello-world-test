@@ -1,0 +1,18 @@
+terraform/
+cloud-systems-101/
+aws-py-ecs-ec2/
+
+# python
+app/__pycache__/
+*.so
+
+# Environments
+.env
+.venv
+.env/
+.venv/
+
+# IDE
+.vscode/
+
+ngrok*

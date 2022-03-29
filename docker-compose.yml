@@ -1,0 +1,81 @@
+version: "3.9"
+services:
+
+  jenkins:
+    # default ports 8080, 50000 - expose mapping as needed to host
+    build:
+      context: .
+      dockerfile: jenkins.Dockerfile
+    env_file:
+      - .myenv
+    container_name: cicd-jenkins
+    restart: unless-stopped
+    networks:
+      - jenkins
+    ports:
+      - "50000:50000"
+      # - "8080:8080"  # it will be exposed only through the nginx reverse proxy
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+      - $HOME:/home
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  # docker :
+  #   image: docker:dind
+  #   container_name: jenkins-docker
+  #   env_file:
+  #     - .myenv
+  #   networks:
+  #     jenkins:
+  #       aliases:
+  #         - docker
+  #   ports:
+  #     - "3000:3000"
+  #     - "2376:2376"
+  #   volumes:
+  #     - jenkins-docker-certs:/certs/client
+  #     - jenkins-data:/var/jenkins_home
+  #   privileged: true
+  #   command: --storage-driver=overlay2
+  
+  docker :
+    image: docker:dind
+    container_name: jenkins-docker
+    env_file:
+      - .myenv
+    networks:
+      - jenkins
+    ports:
+      - "3000:3000"
+      - "2376:2376"
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+    privileged: true
+    command: --storage-driver=overlay2
+
+  nginx:
+    # default ports 80, 443 - expose mapping as needed to host
+    image: nginx:latest
+    container_name: cicd-nginx
+    restart: unless-stopped
+    networks:
+      - jenkins
+    expose:
+      - 85
+    ports:
+      - "85:80"    # http
+      - "8443:443"   # https
+    volumes:
+      - ${PWD}/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ${PWD}/nginx/index.html:/usr/share/nginx/html/index.html
+
+networks:
+  jenkins:
+    driver: bridge
+    
+
+volumes:
+  jenkins-data:
+  jenkins-docker-certs:
