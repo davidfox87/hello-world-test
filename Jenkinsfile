@@ -17,6 +17,7 @@ pipeline {
             stage('Package') {
                 steps {
                     sh  '''  python -V
+                             pip install --upgrade pip
                              python -m pip install pytest flake8 black fastapi uvicorn
                         '''
                 }
