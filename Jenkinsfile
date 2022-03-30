@@ -15,7 +15,7 @@ pipeline {
             steps {
                 sh  '''  python -m venv .venv
                          . .venv/bin/activate
-                         pip install -r pytest flake8 black fastapi uvicorn --user --no-cache
+                         pip install pytest flake8 black fastapi uvicorn
                     '''
             }
         }
