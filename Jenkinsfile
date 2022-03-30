@@ -30,6 +30,7 @@ pipeline {
         stage('Run linting') {
             steps {
                 sh '''
+                    . .venv/bin/activate
                     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                     flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
                     black . --check --diff
@@ -39,6 +40,7 @@ pipeline {
         stage('pylint static type checking') {
             steps {
                 sh '''
+                    . .venv/bin/activate
                     pylint app/
                 '''
             }
