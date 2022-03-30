@@ -16,12 +16,7 @@ pipeline {
                 }
             }
             stages {
-                stage('Package') {
-                    steps {
-                        sh  ''' pip install pytest flake8 black fastapi uvicorn
-                            '''
-                    }
-                }
+               
                 stage('Run unit tests') {
                     steps {
                         sh '''
