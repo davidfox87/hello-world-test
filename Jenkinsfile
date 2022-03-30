@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh '''
                     . .venv/bin/activate
-                    pytest -vvrxXs'
+                    pytest -vvrxXs
                 '''
             }
         }
