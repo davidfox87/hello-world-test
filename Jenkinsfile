@@ -10,39 +10,40 @@ pipeline {
     }
 
     stages {
-        stage('unit tests and Linting') {
-            // agent {
-            //     // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
-            //     dockerfile {
-            //         filename 'Dockerfile.build'
-            //         args '-v /tmp:/tmp'
-            //     }
-            // }
+       
             
-            stages {
-                stage('Run unit tests') {
-                    steps {
-                        sh 'pytest -vvrxXs'
-                    }
-                }
-                stage('Run linting') {
-                    steps {
-                        sh '''
-                            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                            flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-                            black . --check --diff
+            
+        stages {
+            stage('Package') {
+                steps {
+                    sh  '''  python -V
+                             python -m pip install pytest flake8 black fastapi uvicorn
                         '''
-                    }
                 }
-                stage('pylint static type checking') {
-                    steps {
-                        sh '''
-                            pylint app/
-                        '''
-                    }
+            }
+            stage('Run unit tests') {
+                steps {
+                    sh 'pytest -vvrxXs'
+                }
+            }
+            stage('Run linting') {
+                steps {
+                    sh '''
+                        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+                        black . --check --diff
+                    '''
+                }
+            }
+            stage('pylint static type checking') {
+                steps {
+                    sh '''
+                        pylint app/
+                    '''
                 }
             }
         }
+        
 
         stage ('Docker Build') {
             steps {
