@@ -7,13 +7,13 @@ pipeline {
 
     stages {
         stage ('tests, type checking, and linting') {
-            stages {
-                agent {
-                    docker {
-                        image 'python:3.8'
-                    }
+            
+            agent {
+                docker {
+                    image 'python:3.8'
                 }
-
+            }
+            stages {
                 stage('Package') {
                     steps {
                         sh  ''' pip install pytest flake8 black fastapi uvicorn
