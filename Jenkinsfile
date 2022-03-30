@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+      docker {
+        image 'python:3'
+        label 'my-build-agent'
+      }
+    }
 
     environment {
         PULUMI_STACK = "pulumi-aws-hello-world"
@@ -7,13 +12,14 @@ pipeline {
 
     stages {
         stage('unit tests and Linting') {
-            agent {
-                // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
-                dockerfile {
-                    filename 'Dockerfile.build'
-                    args '-v /tmp:/tmp'
-                }
-            }
+            // agent {
+            //     // Equivalent to "docker build -f Dockerfile.build --build-arg version=1.0.2 ./build/
+            //     dockerfile {
+            //         filename 'Dockerfile.build'
+            //         args '-v /tmp:/tmp'
+            //     }
+            // }
+            
             stages {
                 stage('Run unit tests') {
                     steps {
