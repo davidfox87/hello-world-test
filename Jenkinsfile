@@ -1,8 +1,7 @@
 pipeline {
     agent {
       docker {
-        image 'python:3'
-        label 'my-build-agent'
+        image 'python:3.8'
       }
     }
 
