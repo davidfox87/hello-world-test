@@ -1,50 +1,52 @@
 pipeline {
-    agent {
-      docker {
-        image 'python:3.8'
-      }
-    }
+    agent any
 
     environment {
         PULUMI_STACK = "pulumi-aws-hello-world"
     }
 
     stages {
+        stage ('tests, type checking, and linting') {
+            stages {
+                agent {
+                    docker {
+                        image 'python:3.8'
+                    }
+                }
 
-        stage('Package') {
-            steps {
-                sh  '''  python -m venv .venv
-                         . .venv/bin/activate
-                         pip install pytest flake8 black fastapi uvicorn
-                    '''
+                stage('Package') {
+                    steps {
+                        sh  ''' pip install pytest flake8 black fastapi uvicorn
+                            '''
+                    }
+                }
+                stage('Run unit tests') {
+                    steps {
+                        sh '''
+                            pytest -vvrxXs
+                        '''
+                    }
+                }
+                stage('Run linting') {
+                    steps {
+                        sh '''
+                            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                            flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+                            black . --check --diff
+                        '''
+                    }
+                }
+                stage('pylint static type checking') {
+                    steps {
+                        sh '''
+                            pylint app/
+                        '''
+                    }
+                }
+
             }
         }
-        stage('Run unit tests') {
-            steps {
-                sh '''
-                    . .venv/bin/activate
-                    pytest -vvrxXs
-                '''
-            }
-        }
-        stage('Run linting') {
-            steps {
-                sh '''
-                    . .venv/bin/activate
-                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                    flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-                    black . --check --diff
-                '''
-            }
-        }
-        stage('pylint static type checking') {
-            steps {
-                sh '''
-                    . .venv/bin/activate
-                    pylint app/
-                '''
-            }
-        }
+        
 
         stage ('Docker Build') {
             steps {
