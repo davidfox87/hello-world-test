@@ -21,7 +21,10 @@ pipeline {
         }
         stage('Run unit tests') {
             steps {
-                sh 'pytest -vvrxXs'
+                sh '''
+                    . .venv/bin/activate
+                    pytest -vvrxXs'
+                '''
             }
         }
         stage('Run linting') {
