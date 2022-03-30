@@ -13,9 +13,9 @@ pipeline {
 
         stage('Package') {
             steps {
-                sh  '''  python -V
+                sh  '''  python -m venv .venv
                          . .venv/bin/activate
-                         pip install -r requirements.txt --user --no-cache
+                         pip install -r pytest flake8 black fastapi uvicorn --user --no-cache
                     '''
             }
         }
