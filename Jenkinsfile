@@ -9,8 +9,10 @@ pipeline {
         stage ('tests, type checking, and linting') {
             
             agent {
-                docker {
-                    image 'python:3.8'
+                dockerfile {
+                    filename 'Dockerfile.build'
+                    args '-u 0:0' //Forces Container tu run as User Root                    
+                    reuseNode true
                 }
             }
             stages {
