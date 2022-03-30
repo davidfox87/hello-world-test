@@ -27,9 +27,9 @@ pipeline {
                 stage('Run linting') {
                     steps {
                         sh '''
-                            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                            flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-                            black . --check --diff
+                            flake8 ./app --count --select=E9,F63,F7,F82 --show-source --statistics
+                            flake8 ./app --count --max-complexity=10 --max-line-length=127 --statistics
+                            black ./app --check --diff
                         '''
                     }
                 }
