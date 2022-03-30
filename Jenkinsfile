@@ -10,41 +10,36 @@ pipeline {
     }
 
     stages {
-       
-            
-            
-        stages {
-            stage('Package') {
-                steps {
-                    sh  '''  python -V
-                             pip install --upgrade pip
-                             python -m pip install pytest flake8 black fastapi uvicorn
-                        '''
-                }
-            }
-            stage('Run unit tests') {
-                steps {
-                    sh 'pytest -vvrxXs'
-                }
-            }
-            stage('Run linting') {
-                steps {
-                    sh '''
-                        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-                        black . --check --diff
+
+        stage('Package') {
+            steps {
+                sh  '''  python -V
+                            pip install --upgrade pip
+                            python -m pip install pytest flake8 black fastapi uvicorn
                     '''
-                }
-            }
-            stage('pylint static type checking') {
-                steps {
-                    sh '''
-                        pylint app/
-                    '''
-                }
             }
         }
-        
+        stage('Run unit tests') {
+            steps {
+                sh 'pytest -vvrxXs'
+            }
+        }
+        stage('Run linting') {
+            steps {
+                sh '''
+                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+                    black . --check --diff
+                '''
+            }
+        }
+        stage('pylint static type checking') {
+            steps {
+                sh '''
+                    pylint app/
+                '''
+            }
+        }
 
         stage ('Docker Build') {
             steps {
@@ -64,11 +59,10 @@ pipeline {
         stage('Deploying using Pulumi') {
             steps {
                 echo 'Deploying'
-                sh "echo $AWS_ACCESS_KEY_ID"
 
-                sh "cd infrastructure"
-                sh "pulumi stack select ${PULUMI_STACK} --cwd infrastructure/"
-                sh "pulumi up --yes --cwd infrastructure/"
+                //sh "cd infrastructure"
+                //sh "pulumi stack select ${PULUMI_STACK} --cwd infrastructure/"
+                //sh "pulumi up --yes --cwd infrastructure/"
 
             }
         }
